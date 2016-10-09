@@ -44,11 +44,9 @@ ll a[N];
 
 
 void build_table(int n, int k) {
-
     for (int i = 0; i < n; i++) {
         table[i][0] = a[i];
     }
-
     for (int j = 1; j <= k; j++) {
         for (int i = 0; i <= n - (1 << j); i++) {
             table[i][j] = table[i][j - 1] + table[i + (1 << (j - 1))][j - 1];
@@ -57,9 +55,7 @@ void build_table(int n, int k) {
 }
 
 ll query(int l, int r, int k) {
-
     ll ans = 0;
-
     for (int i = k; i >= 0; i--) {
         if (l + (1 << i) - 1 <= r) {
             ans += table[l][i];
@@ -69,22 +65,14 @@ ll query(int l, int r, int k) {
     return ans;
 }
 int main() {
-    //ios::sync_with_stdio(0);
-    //cin.tie(0);
-
     int n, q, k;
-
     cin >> n >> q;
-
     for (k = 0; (1 << k) <= n; k++);
     k--;
-
     for (int i = 0; i < n; i++) {
         cin >> a[i];
     }
-
     build_table(n, k);
-
     while (q--) {
         int l, r;
         cin >> l >> r;
@@ -93,4 +81,3 @@ int main() {
     }
     End;
 }
-
