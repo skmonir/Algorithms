@@ -44,7 +44,6 @@ int a[N + 5];
 
 
 void build_table(int n, int k) {
-
     for (int i = 0; i < n; i++) {
         table[i][0] = a[i];
     }
@@ -56,39 +55,28 @@ void build_table(int n, int k) {
 }
 
 int query(int l, int r, int k) {
-
     int ans = inf;
-
     for (int i = k; i >= 0; i--) {
         if (l + (1 << i) - 1 <= r) {
             ans = min(ans, table[l][i]);
             l += 1 << i;
         }
     }
-
     return ans;
 }
 int main() {
-    //ios::sync_with_stdio(0);
-    //cin.tie(0);
-
     int n, q, k;
-
     cin >> n >> q;
-
     for (int i = 0; ; i++) {
         if ((1 << i) > n) {
             k = i - 1;
             break;
         }
     }
-
     for (int i = 0; i < n; i++) {
         cin >> a[i];
     }
-
     build_table(n, k);
-
     while (q--) {
         int l, r;
         cin >> l >> r;
