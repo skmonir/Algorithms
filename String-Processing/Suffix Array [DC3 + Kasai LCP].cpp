@@ -6,8 +6,6 @@ using namespace std;
 #define fill(a, b)     memset(a, b, sizeof a)
 
 const int N = 1e5 + 5;
-int ks = 0;
-
 
 int n, m;
 char s[N];
@@ -27,19 +25,12 @@ void Sort() {
 
 void SuffixArray() {
     n++;
-    for (int i = 0; i < n; i++) {
-        x[i] = s[i];
-        y[i] = i;
-    }
+    for (int i = 0; i < n; i++) x[i] = s[i], y[i] = i;
     Sort();
     for (int i = 1, p = 1, h = 1; p < n; h <<= 1, m = p) {
-        for (i = n - h, p = 0; i < n; i++) {
-            y[p++] = i;
-        }
+        for (i = n - h, p = 0; i < n; i++) y[p++] = i;
         for (int k = 0; k < n; k++) {
-            if (SA[k] >= h) {
-                y[p++] = SA[k] - h;
-            }
+            if (SA[k] >= h) y[p++] = SA[k] - h;
         }
         Sort();
         swap(x, y);
@@ -48,9 +39,7 @@ void SuffixArray() {
             x[SA[i]] = cmp(SA[i], SA[i - 1], h) ? p - 1 : p++;
         }
     }
-    for (int i = 1; i < n; i++) {
-        SA[i - 1] = SA[i];
-    }
+    for (int i = 1; i < n; i++) SA[i - 1] = SA[i];
     n--;
 }
 
@@ -59,9 +48,7 @@ void kasaiLCP() {
     for (int i = 0, h = 0; i < n; i++, h ? h-- : 0) {
         if (pos[i] > 0) {
             int j = SA[pos[i] - 1];
-            while (i + h < n && j + h < n && s[i + h] == s[j + h]) {
-                h++;
-            }
+            while (i + h < n && j + h < n && s[i + h] == s[j + h]) h++;
             LCP[pos[i]] = h;
         }
     }
@@ -77,10 +64,5 @@ int main() {
         m = 256;
         SuffixArray();
         kasaiLCP();
-        int ans = 0;
-        for (int i = 0; i < n; i++) {
-            ans += i + 1 - LCP[i];
-        }
-        cout << ans << endl;
     }
 }
