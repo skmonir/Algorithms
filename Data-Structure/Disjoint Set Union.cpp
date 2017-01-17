@@ -14,6 +14,8 @@ struct UnionFind {
         return par[u] == u ? u : par[u] = root(par[u]);
     }
     void merge(int u, int v) {
+        u = root(u), v = root(v);
+        if (u == v) return;
         if (sz[u] > sz[v]) swap(u, v);
         par[v] = u, sz[u] += sz[v];
     }
@@ -26,9 +28,7 @@ int main() {
     while (m--) {
         int u, v;
         scanf("%d%d", &u, &v);
-        int x = helper.root(u);
-        int y = helper.root(v);
-        if (x != y) helper.merge(x, y);
+        helper.merge(u, v);
     }
     int best = 0;
     for (int i = 0; i <= n; i++) {
