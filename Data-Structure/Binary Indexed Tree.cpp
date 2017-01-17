@@ -1,35 +1,30 @@
 #include <bits/stdc++.h>
-using namespace std;
-int BIT[100005];
 
-void init(int a[], int n) {
-    memset(BIT, 0, sizeof BIT);
-    for (int i = 1; i <= n; i++) {
-        int indx = i;
-        int value = a[i];
-        while (indx <= n) {
-            BIT[indx] += value;
-            indx += indx & -indx;
-        }
+using namespace std;
+
+const int N = 1e5 + 5;
+
+struct BinaryIndexedTree {
+    int BIT[N];
+    void upd(int x, int d) {
+        while (x < N) BIT[x] += d, x += x & -x;
     }
-}
-void update(int indx, int data, int n) {
-    while (indx <= n) {
-        BIT[indx] += data;
-        indx += indx & -indx;
+    int ask(int x) {
+        int s = 0;
+        while (x > 0) s += BIT[x], x -= x & -x;
+        return s;
     }
-}
-int query(int indx) {
-    int sum = 0;
-    while (indx) {
-        sum += BIT[indx];
-        indx -= indx & -indx;
+    int ask(int l, int r) {
+        return ask(r) - ask(l - 1);
     }
-    return sum;
-}
+} fen;
+
 int main() {
     int tree[15] = {0, 3, 6, 5, 7, 4, 2, 3, 1, 2, 5, 4, 9};
-    init(tree, 12);
-    update(3, 5, 12);
-    cout << query(3);
+    for (int i = 1; i < 13; i++) fen.upd(i, tree[i]);
+    while (true) {
+        int l, r;
+        cin >> l >> r;
+        cout << fen.ask(l, r) << endl;
+    }
 }
