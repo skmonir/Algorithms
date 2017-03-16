@@ -6,6 +6,9 @@ const int N = 1e5 + 5;
 
 struct BinaryIndexedTree {
     int BIT[N];
+    void init() {
+        for (int i = 0; i < N; i++) BIT[i] = 0;
+    }
     void upd(int x, int d) {
         while (x < N) BIT[x] += d, x += x & -x;
     }
@@ -20,11 +23,4 @@ struct BinaryIndexedTree {
 } fen;
 
 int main() {
-    int tree[15] = {0, 3, 6, 5, 7, 4, 2, 3, 1, 2, 5, 4, 9};
-    for (int i = 1; i < 13; i++) fen.upd(i, tree[i]);
-    while (true) {
-        int l, r;
-        cin >> l >> r;
-        cout << fen.ask(l, r) << endl;
-    }
 }
