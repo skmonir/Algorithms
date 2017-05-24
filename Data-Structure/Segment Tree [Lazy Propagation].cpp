@@ -1,86 +1,58 @@
 #include <bits/stdc++.h>
+
 using namespace std;
-#define endl           '\n'
-#define LL             long long
-#define all(x)         x.begin(), x.end()
-#define fill(a, b)     memset(a, b, sizeof a)
 
-const LL Mod = 1000000007;
-const int N = 1e5 + 5;
+const int N = (int) 1e5 + 5;
 
+long long t[N << 2], f[N << 2];
 
-int a[N];
-
-int seg[N * 3], lazy[N * 3];
-
-void build(int lo, int hi, int node) {
-    if (lo == hi) {
-        seg[node] = a[lo];
-        return;
+void propagate(int nd, int s, int e) {
+    if (f[nd]) {
+        t[nd] += f[nd] * (e - s + 1);
+        if (s != e) f[nd << 1] += f[nd], f[nd << 1 | 1] += f[nd];
+        f[nd] = 0;
     }
-    int mid = (lo + hi) >> 1;
-    build(lo, mid, node * 2 + 1);
-    build(mid + 1, hi, node * 2 + 2);
-    seg[node] = min(seg[node * 2 + 1], seg[node * 2 + 2]);
 }
 
-void update(int lo, int hi, int left, int right, int node, int value) {
-    if (lo > hi) return;
-    if (lazy[node] != 0) {
-        seg[node] += lazy[node];
-        if (lo != hi) {
-            lazy[node * 2 + 1] += lazy[node];
-            lazy[node * 2 + 2] += lazy[node];
-        }
-        lazy[node] = 0;
-    }
-    if (right < lo || left > hi) return;
-    if (lo >= left && hi <= right) {
-        seg[node] += value;
-        if (lo != hi) {
-            lazy[node * 2 + 1] += value;
-            lazy[node * 2 + 2] += value;
-        }
+void upd(int nd, int s, int e, int l, int r, long long v) {
+    propagate(nd, s, e);
+    if (e < l or r < s) return;
+    if (s >= l and e <= r) {
+        f[nd] += v;
+        propagate(nd, s, e);
         return;
     }
-    int mid = (lo + hi) >> 1;
-    update(lo, mid, left, right, node * 2 + 1, value);
-    update(mid + 1, hi, left, right, node * 2 + 2, value);
-    seg[node] = min(seg[node * 2 + 1], seg[node * 2 + 2]);
+    int md = (s + e) >> 1;
+    upd(nd << 1, s, md, l, r, v);
+    upd(nd << 1 | 1, md + 1, e, l, r, v);
+    t[nd] = t[nd << 1] + t[nd << 1 | 1];
 }
 
-int query(int lo, int hi, int left, int right, int node) {
-    if (lo > hi) return INT_MAX;
-    if (lazy[node] != 0) {
-        seg[node] += lazy[node];
-        if (lo != hi) {
-            lazy[node * 2 + 1] += lazy[node];
-            lazy[node * 2 + 2] += lazy[node];
-        }
-        lazy[node] = 0;
-    }
-    if (right < lo || left > hi) return INT_MAX;
-    if (lo >= left && hi <= right) return seg[node];
-    int mid = (lo + hi) >> 1;
-    int a = query(lo, mid, left, right, node * 2 + 1);
-    int b = query(mid + 1, hi, left, right, node * 2 + 2);
-    return min(a, b);
+long long ask(int nd, int s, int e, int l, int r) {
+    propagate(nd, s, e);
+    if (e < l or r < s) return 0;
+    int md = (s + e) >> 1;
+    if (s >= l and e <= r) return t[nd];
+    long long c1 = ask(nd << 1, s, md, l, r);
+    long long c2 = ask(nd << 1 | 1, md + 1, e, l, r);
+    return c1 + c2;
 }
 
 int main() {
-    int n; scanf("%d", &n);
-    for (int i = 1; i <= n; i++) {
-        scanf("%d", a + i);
-    }
-    build(1, n, 0);
-    int q; scanf("%d", &q);
-    while (q--) {
-        int k, x, y;
-        scanf("%d%d%d", &k, &x, &y);
-        if (k == 2) printf("%d\n", query(1, n, x, y, 0));
+    int n, m;
+    scanf("%d%d", &n, &m);
+    memset(f, 0, sizeof f);
+    memset(t, 0, sizeof t);
+    while (m--) {
+        int cc, l, r;
+        long long v;
+        scanf("%d%d%d", &cc, &l, &r);
+        l++, r++;
+        if (cc) printf("%lld\n", ask(1, 1, n, l, r));
         else {
-            int z; scanf("%d", &z);
-            update(1, n, x, y, 0, z);
+            scanf("%lld", &v);
+            upd(1, 1, n, l, r, v);
         }
     }
+    return 0;
 }
