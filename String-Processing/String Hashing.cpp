@@ -8,7 +8,7 @@ char s[N];
 
 struct HashString {
     LL Hash[2][N], Pow[2][N];
-    const int P[2] = {31, 37};
+    const int P[2] = {131, 151};
     const LL Mod[2] = {1000000007LL, 1000000009LL};
     void GeneratePower() {
         Pow[0][0] = Pow[1][0] = 1;
